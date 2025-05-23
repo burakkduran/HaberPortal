@@ -1,0 +1,70 @@
+@{
+    ViewData["Title"] = "Giriş Yap";
+}
+
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="text-center">Giriş Yap</h3>
+                </div>
+                <div class="card-body">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="userName" class="form-label">Kullanıcı Adı</label>
+                            <input type="text" class="form-control" id="userName" name="userName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Şifre</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Giriş Yap</button>
+                        </div>
+                    </form>
+                    <div class="mt-3 text-center">
+                        <p>Hesabınız yok mu? <a href="/Account/Register">Kayıt Ol</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/auth.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#loginForm").on("submit", function (e) {
+                e.preventDefault();
+                
+                var data = {
+                    userName: $("#userName").val(),
+                    password: $("#password").val()
+                };
+
+                $.ajax({
+                    url: "https://localhost:7218/api/User/SignIn",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(data),
+                    success: function (response) {
+                        if (response.status) {
+                            // Token'ı tokenManager ile kaydet
+                            tokenManager.setToken(response.message);
+                            // Ana sayfaya yönlendir
+                            window.location.href = "/";
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function (xhr) {
+                        alert("Giriş yapılırken bir hata oluştu!");
+                        console.error(xhr);
+                    }
+                });
+            });
+        });
+    </script>
+} 

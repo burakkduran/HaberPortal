@@ -1,0 +1,19 @@
+﻿@{
+    ViewData["Title"] = "Ana Sayfa";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">Son Haberler</h2>
+        </div>
+    </div>
+    <div class="row" id="articles-container">
+        <!-- Haberler AJAX ile buraya yüklenecek -->
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/auth.js"></script>
+    <script src="~/js/articles.js"></script>
+}
