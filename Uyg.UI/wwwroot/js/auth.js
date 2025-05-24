@@ -1,5 +1,5 @@
 // Token yönetimi için fonksiyonlar
-const tokenManager = {
+window.tokenManager = {
   setToken: function (token) {
     localStorage.setItem("jwt_token", token);
   },
@@ -11,6 +11,20 @@ const tokenManager = {
   },
   isAuthenticated: function () {
     return !!this.getToken();
+  },
+  getUserInfo: function () {
+    return new Promise((resolve, reject) => {
+      $.ajax({
+        url: "https://localhost:7218/api/Account/GetUserInfo",
+        type: "GET",
+        success: function (response) {
+          resolve(response);
+        },
+        error: function (error) {
+          reject(error);
+        },
+      });
+    });
   },
 };
 
