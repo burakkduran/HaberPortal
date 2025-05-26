@@ -18,6 +18,12 @@ namespace Uyg.UI.Controllers
             return View();
         }
 
+        public IActionResult ArticleDetail(int id)
+        {
+            ViewBag.ArticleId = id;
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();

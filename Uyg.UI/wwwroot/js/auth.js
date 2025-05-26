@@ -1,3 +1,6 @@
+// API URL'si
+const API_URL = "https://localhost:7218/api";
+
 // Token yönetimi için fonksiyonlar
 window.tokenManager = {
   setToken: function (token) {
@@ -15,7 +18,7 @@ window.tokenManager = {
   getUserInfo: function () {
     return new Promise((resolve, reject) => {
       $.ajax({
-        url: "https://localhost:7218/api/Account/GetUserInfo",
+        url: `${API_URL}/Account/GetUserInfo`,
         type: "GET",
         success: function (response) {
           resolve(response);
@@ -40,6 +43,14 @@ $.ajaxSetup({
 
 // Yetkilendirme kontrolü
 function checkAuth() {
+  // Login sayfasında isek kontrol yapma
+  if (
+    window.location.pathname === "/Account/Login" ||
+    window.location.pathname === "/Account/Register"
+  ) {
+    return true;
+  }
+
   if (!tokenManager.isAuthenticated()) {
     window.location.href = "/Account/Login";
     return false;

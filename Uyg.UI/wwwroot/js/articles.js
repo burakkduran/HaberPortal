@@ -1,9 +1,17 @@
 // Haberleri listele
 function loadArticles() {
+  // Login veya Register sayfasında isek haberleri yükleme
+  if (
+    window.location.pathname === "/Account/Login" ||
+    window.location.pathname === "/Account/Register"
+  ) {
+    return;
+  }
+
   if (!checkAuth()) return;
 
   $.ajax({
-    url: "https://localhost:7218/api/Article",
+    url: `${API_URL}/Article`,
     method: "GET",
     success: function (response) {
       const articlesContainer = $("#articles-container");
@@ -23,9 +31,9 @@ function loadArticles() {
                                     <small class="text-muted">${new Date(
                                       article.publishDate
                                     ).toLocaleDateString("tr-TR")}</small>
-                                    <button class="btn btn-primary btn-sm" onclick="viewArticle(${
+                                    <a href="/Home/ArticleDetail?id=${
                                       article.id
-                                    })">Devamını Oku</button>
+                                    }" class="btn btn-primary btn-sm">Devamını Oku</a>
                                 </div>
                             </div>
                         </div>
