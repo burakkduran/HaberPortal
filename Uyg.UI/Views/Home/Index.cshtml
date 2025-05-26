@@ -2,17 +2,107 @@
     ViewData["Title"] = "Ana Sayfa";
 }
 
-<div class="container mt-4">
-    <div class="row">
+<div class="container">
+    <div class="row mb-4">
         <div class="col-12">
-            <h2 class="mb-4">Son Haberler</h2>
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">
+                    <i class="bi bi-newspaper text-primary me-2"></i>Son Haberler
+                </h2>
+                <div class="d-flex gap-2">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="searchInput" placeholder="Haber ara...">
+                        <button class="btn btn-outline-primary" type="button" id="searchButton">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="row" id="articles-container">
+
+    <div class="row g-4" id="articles-container">
         <!-- Haberler AJAX ile buraya yüklenecek -->
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12 text-center">
+            <div class="spinner-border text-primary d-none" role="status" id="loadingSpinner">
+                <span class="visually-hidden">Yükleniyor...</span>
+            </div>
+        </div>
     </div>
 </div>
 
 @section Scripts {
     <script src="~/js/auth.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Haber kartı şablonu
+            function createArticleCard(article) {
+                return `
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title text-truncate">${article.title}</h5>
+                                <p class="card-text text-muted small">
+                                    <i class="bi bi-person me-1"></i>${article.author}
+                                    <span class="ms-2"><i class="bi bi-calendar me-1"></i>${new Date(article.publishDate).toLocaleDateString('tr-TR')}</span>
+                                </p>
+                                <p class="card-text">${article.content.substring(0, 150)}...</p>
+                            </div>
+                            <div class="card-footer bg-transparent border-top-0">
+                                <a href="/Article/Details/${article.id}" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-arrow-right me-1"></i>Devamını Oku
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Haberleri yükle
+            function loadArticles() {
+                $('#loadingSpinner').removeClass('d-none');
+                $.get('/api/articles')
+                    .done(function(articles) {
+                        const container = $('#articles-container');
+                        container.empty();
+                        articles.forEach(article => {
+                            container.append(createArticleCard(article));
+                        });
+                    })
+                    .fail(function(error) {
+                        console.error('Haberler yüklenirken hata oluştu:', error);
+                    })
+                    .always(function() {
+                        $('#loadingSpinner').addClass('d-none');
+                    });
+            }
+
+            // Sayfa yüklendiğinde haberleri getir
+            loadArticles();
+
+            // Arama işlevi
+            $('#searchButton').click(function() {
+                const searchTerm = $('#searchInput').val().toLowerCase();
+                $('.card').each(function() {
+                    const title = $(this).find('.card-title').text().toLowerCase();
+                    const content = $(this).find('.card-text').text().toLowerCase();
+                    if (title.includes(searchTerm) || content.includes(searchTerm)) {
+                        $(this).closest('.col-md-6').show();
+                    } else {
+                        $(this).closest('.col-md-6').hide();
+                    }
+                });
+            });
+
+            // Enter tuşu ile arama
+            $('#searchInput').keypress(function(e) {
+                if (e.which == 13) {
+                    $('#searchButton').click();
+                }
+            });
+        });
+    </script>
 }
